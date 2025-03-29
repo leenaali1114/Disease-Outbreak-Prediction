@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map - Malappuram Disease Outbreak Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <i class="fas fa-virus"></i> Malappuram Disease Predictor
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.predict') }}">Predict</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('main.map') }}">Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.about') }}">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Map Header -->
+    <header class="map-header py-4 bg-light">
+        <div class="container">
+            <h1 class="display-5 fw-bold text-primary">Disease Outbreak Map</h1>
+            <p class="lead">Geographical visualization of disease outbreaks in Malappuram district.</p>
+        </div>
+    </header>
+
+    <!-- Map Content -->
+    <section class="map-content py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Malappuram District Map</h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="map" style="height: 600px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Location Statistics</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="locationFilter" class="form-label">Filter by Location:</label>
+                                <select class="form-select" id="locationFilter">
+                                    <option value="all">All Locations</option>
+                                    {% for location in location_stats %}
+                                    <option value="{{ location }}">{{ location }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div id="locationDetails">
+                                <p class="text-muted">Select a location on the map or from the dropdown to view details.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Risk Legend</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="marker-icon bg-success me-2" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                                <span>Low Risk</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="marker-icon bg-warning me-2" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                                <span>Medium Risk</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="marker-icon bg-danger me-2" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                                <span>High Risk</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-4 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Malappuram Disease Outbreak Prediction</h5>
+                    <p>A machine learning-based system for predicting and preventing disease outbreaks in Malappuram district, Kerala.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('main.index') }}" class="text-white">Home</a></li>
+                        <li><a href="{{ url_for('main.dashboard') }}" class="text-white">Dashboard</a></li>
+                        <li><a href="{{ url_for('main.predict') }}" class="text-white">Predict</a></li>
+                        <li><a href="{{ url_for('main.map') }}" class="text-white">Map</a></li>
+                        <li><a href="{{ url_for('main.about') }}" class="text-white">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@malappuram-health.org</li>
+                        <li><i class="fas fa-phone me-2"></i> +91 1234567890</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Malappuram, Kerala, India</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2023 Malappuram Disease Outbreak Prediction. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([11.0509, 76.0710], 10);
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Location data
+        const locationData = {
+            {% for location, stats in location_stats.items() %}
+            "{{ location }}": {
+                coordinates: {{ location_coordinates[location] }},
+                totalCases: {{ stats.total_cases }},
+                totalDeaths: {{ stats.total_deaths }},
+                diseaseCount: {{ stats.disease_count }},
+                highRiskCount: {{ stats.high_risk_count }},
+                mediumRiskCount: {{ stats.medium_risk_count }},
+                lowRiskCount: {{ stats.low_risk_count }}
+            },
+            {% endfor %}
+        };
+        
+        // Determine marker color based on risk
+        function getMarkerColor(location) {
+            const data = locationData[location];
+            if (data.highRiskCount > data.mediumRiskCount && data.highRiskCount > data.lowRiskCount) {
+                return 'red';
+            } else if (data.mediumRiskCount > data.lowRiskCount) {
+                return 'orange';
+            } else {
+                return 'green';
+            }
+        }
+        
+        // Add markers for each location
+        const markers = {};
+        for (const location in locationData) {
+            const data = locationData[location];
+            const markerColor = getMarkerColor(location);
+            
+            const markerIcon = L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="background-color: ${markerColor}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;"></div>`,
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+            
+            const marker = L.marker(data.coordinates, { icon: markerIcon })
+                .addTo(map)
+                .bindPopup(`
+                    <strong>${location}</strong><br>
+                    Total Cases: ${data.totalCases}<br>
+                    Total Deaths: ${data.totalDeaths}<br>
+                    Disease Types: ${data.diseaseCount}<br>
+                    High Risk Outbreaks: ${data.highRiskCount}
+                `);
+                
+            markers[location] = marker;
+            
+            marker.on('click', function() {
+                updateLocationDetails(location);
+                document.getElementById('locationFilter').value = location;
+            });
+        }
+        
+        // Update location details panel
+        function updateLocationDetails(location) {
+            if (location === 'all') {
+                document.getElementById('locationDetails').innerHTML = `
+                    <p class="text-muted">Select a location on the map or from the dropdown to view details.</p>
+                `;
+                return;
+            }
+            
+            const data = locationData[location];
+            document.getElementById('locationDetails').innerHTML = `
+                <h4>${location}</h4>
+                <table class="table table-striped">
+                    <tr>
+                        <th>Total Cases</th>
+                        <td>${data.totalCases}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Deaths</th>
+                        <td>${data.totalDeaths}</td>
+                    </tr>
+                    <tr>
+                        <th>Disease Types</th>
+                        <td>${data.diseaseCount}</td>
+                    </tr>
+                    <tr>
+                        <th>High Risk Outbreaks</th>
+                        <td>${data.highRiskCount}</td>
+                    </tr>
+                    <tr>
+                        <th>Medium Risk Outbreaks</th>
+                        <td>${data.mediumRiskCount}</td>
+                    </tr>
+                    <tr>
+                        <th>Low Risk Outbreaks</th>
+                        <td>${data.lowRiskCount}</td>
+                    </tr>
+                </table>
+                <a href="{{ url_for('main.predict') }}" class="btn btn-primary btn-sm">Make Prediction for ${location}</a>
+            `;
+        }
+        
+        // Handle location filter change
+        document.getElementById('locationFilter').addEventListener('change', function() {
+            const location = this.value;
+            if (location !== 'all') {
+                map.setView(locationData[location].coordinates, 12);
+                markers[location].openPopup();
+                updateLocationDetails(location);
+            } else {
+                map.setView([11.0509, 76.0710], 10);
+                updateLocationDetails('all');
+            }
+        });
+    </script>
+</body>
+</html> 

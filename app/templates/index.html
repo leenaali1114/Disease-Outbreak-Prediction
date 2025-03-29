@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malappuram Disease Outbreak Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <i class="fas fa-virus"></i> Malappuram Disease Predictor
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('main.index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.predict') }}">Predict</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.map') }}">Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.about') }}">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold text-primary">Predict Disease Outbreaks in Malappuram</h1>
+                    <p class="lead">Using advanced machine learning to forecast and prevent disease outbreaks in the Malappuram district of Kerala.</p>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                        <a href="{{ url_for('main.predict') }}" class="btn btn-primary btn-lg px-4 me-md-2">Make Prediction</a>
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary btn-lg px-4">View Dashboard</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="{{ url_for('static', filename='img/hero-image.jpg') }}" alt="Disease Prediction" class="img-fluid rounded shadow-lg">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section class="features-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Key Features</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">Predictive Analytics</h3>
+                            <p class="card-text">Advanced machine learning models to predict disease outbreaks with high accuracy.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-map-marked-alt fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">Geographical Mapping</h3>
+                            <p class="card-text">Visualize disease hotspots and risk areas across Malappuram district.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-clipboard-list fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">AI Recommendations</h3>
+                            <p class="card-text">Get AI-powered preventive recommendations using Groq's advanced LLMs.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Disease Stats Section -->
+    <section class="disease-stats-section py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Disease Overview in Malappuram</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Common Diseases</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                {% for disease in diseases[:5] %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ disease }}
+                                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-sm btn-outline-primary">View Stats</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Key Locations</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                {% for location in locations[:5] %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ location }}
+                                    <a href="{{ url_for('main.map') }}" class="btn btn-sm btn-outline-primary">View on Map</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-section py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="mb-4">Ready to predict disease outbreaks?</h2>
+            <p class="lead mb-4">Use our advanced prediction tool to forecast potential outbreaks and take preventive measures.</p>
+            <a href="{{ url_for('main.predict') }}" class="btn btn-light btn-lg">Make a Prediction Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-4 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Malappuram Disease Outbreak Prediction</h5>
+                    <p>A machine learning-based system for predicting and preventing disease outbreaks in Malappuram district, Kerala.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('main.index') }}" class="text-white">Home</a></li>
+                        <li><a href="{{ url_for('main.dashboard') }}" class="text-white">Dashboard</a></li>
+                        <li><a href="{{ url_for('main.predict') }}" class="text-white">Predict</a></li>
+                        <li><a href="{{ url_for('main.map') }}" class="text-white">Map</a></li>
+                        <li><a href="{{ url_for('main.about') }}" class="text-white">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@malappuram-health.org</li>
+                        <li><i class="fas fa-phone me-2"></i> +91 1234567890</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Malappuram, Kerala, India</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2023 Malappuram Disease Outbreak Prediction. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

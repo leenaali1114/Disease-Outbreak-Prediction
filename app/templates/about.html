@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Malappuram Disease Outbreak Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <i class="fas fa-virus"></i> Malappuram Disease Predictor
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.predict') }}">Predict</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.map') }}">Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('main.about') }}">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Header -->
+    <header class="about-header py-4 bg-light">
+        <div class="container">
+            <h1 class="display-5 fw-bold text-primary">About the Project</h1>
+            <p class="lead">Learn more about the Malappuram Disease Outbreak Prediction System.</p>
+        </div>
+    </header>
+
+    <!-- About Content -->
+    <section class="about-content py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h2 class="mb-4">Project Overview</h2>
+                            <p>The Malappuram Disease Outbreak Prediction System is a machine learning-based application designed to predict and prevent disease outbreaks in the Malappuram district of Kerala, India. By analyzing historical data on disease occurrences, environmental factors, and demographic information, the system can forecast potential outbreaks and provide preventive recommendations.</p>
+                            
+                            <h3 class="mt-4">Key Features</h3>
+                            <ul>
+                                <li><strong>Predictive Analytics:</strong> Advanced machine learning models to predict disease outbreaks with high accuracy.</li>
+                                <li><strong>Interactive Dashboard:</strong> Comprehensive visualization of disease patterns and statistics.</li>
+                                <li><strong>Geographical Mapping:</strong> Visual representation of disease hotspots and risk areas.</li>
+                                <li><strong>AI-Powered Recommendations:</strong> Preventive measures generated using Groq's advanced LLMs.</li>
+                                <li><strong>Email Alert System:</strong> Automated notifications for high-risk predictions.</li>
+                            </ul>
+                            
+                            <h3 class="mt-4">Technology Stack</h3>
+                            <ul>
+                                <li><strong>Backend:</strong> Flask (Python web framework)</li>
+                                <li><strong>Machine Learning:</strong> Scikit-learn, Pandas, NumPy</li>
+                                <li><strong>Frontend:</strong> HTML, CSS, JavaScript, Bootstrap 5</li>
+                                <li><strong>Data Visualization:</strong> Chart.js, Leaflet.js</li>
+                                <li><strong>AI Integration:</strong> Groq API for preventive recommendations</li>
+                                <li><strong>Email Service:</strong> Flask-Mail for alert notifications</li>
+                            </ul>
+                            
+                            <h3 class="mt-4">Dataset</h3>
+                            <p>The system uses a comprehensive dataset of disease outbreaks in Malappuram district, including information on:</p>
+                            <ul>
+                                <li>Disease types (Cholera, Dengue, Malaria, COVID-19, etc.)</li>
+                                <li>Locations within Malappuram</li>
+                                <li>Number of cases and deaths</li>
+                                <li>Environmental factors (rainfall, temperature, humidity)</li>
+                                <li>Infrastructure metrics (hospital beds, vaccination rates)</li>
+                                <li>Historical outbreak patterns</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Contact Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <p><i class="fas fa-envelope me-2"></i> info@malappuram-health.org</p>
+                            <p><i class="fas fa-phone me-2"></i> +91 1234567890</p>
+                            <p><i class="fas fa-map-marker-alt me-2"></i> Malappuram, Kerala, India</p>
+                            
+                            <hr>
+                            
+                            <h5 class="mt-4">Development Team</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-user-md me-2"></i> Dr. Arun Kumar - Public Health Expert
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-laptop-code me-2"></i> Priya Sharma - Lead Developer
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-chart-line me-2"></i> Mohammed Ali - Data Scientist
+                                </li>
+                                <li>
+                                    <i class="fas fa-paint-brush me-2"></i> Lakshmi Nair - UI/UX Designer
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Resources</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <i class="fas fa-file-pdf me-2"></i>
+                                    <a href="#" class="text-decoration-none">Project Documentation</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-book me-2"></i>
+                                    <a href="#" class="text-decoration-none">User Manual</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-question-circle me-2"></i>
+                                    <a href="#" class="text-decoration-none">FAQ</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fab fa-github me-2"></i>
+                                    <a href="#" class="text-decoration-none">GitHub Repository</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-4 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Malappuram Disease Outbreak Prediction</h5>
+                    <p>A machine learning-based system for predicting and preventing disease outbreaks in Malappuram district, Kerala.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('main.index') }}" class="text-white">Home</a></li>
+                        <li><a href="{{ url_for('main.dashboard') }}" class="text-white">Dashboard</a></li>
+                        <li><a href="{{ url_for('main.predict') }}" class="text-white">Predict</a></li>
+                        <li><a href="{{ url_for('main.map') }}" class="text-white">Map</a></li>
+                        <li><a href="{{ url_for('main.about') }}" class="text-white">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@malappuram-health.org</li>
+                        <li><i class="fas fa-phone me-2"></i> +91 1234567890</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Malappuram, Kerala, India</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2023 Malappuram Disease Outbreak Prediction. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

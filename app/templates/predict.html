@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict - Malappuram Disease Outbreak Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <i class="fas fa-virus"></i> Malappuram Disease Predictor
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('main.predict') }}">Predict</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.map') }}">Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.about') }}">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Prediction Header -->
+    <header class="prediction-header py-4 bg-light">
+        <div class="container">
+            <h1 class="display-5 fw-bold text-primary">Disease Outbreak Prediction</h1>
+            <p class="lead">Enter parameters to predict the risk of disease outbreaks in Malappuram.</p>
+        </div>
+    </header>
+
+    <!-- Prediction Content -->
+    <section class="prediction-content py-4">
+        <div class="container">
+            <div class="row">
+                <!-- Prediction Form -->
+                <div class="col-lg-6">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Prediction Parameters</h3>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('main.predict') }}">
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="date" name="date" required>
+                                    <small class="text-muted">Select a future date for prediction (within next 12 months)</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="location" class="form-label">Location</label>
+                                    <select class="form-select" id="location" name="location" required>
+                                        <option value="" selected disabled>Select location</option>
+                                        {% for location in locations %}
+                                        <option value="{{ location }}">{{ location }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="text-muted">Select a location within Malappuram district</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="disease" class="form-label">Disease</label>
+                                    <select class="form-select" id="disease" name="disease" required>
+                                        <option value="" selected disabled>Select disease</option>
+                                        {% for disease in diseases %}
+                                        <option value="{{ disease }}">{{ disease }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="text-muted">Select the disease type for prediction</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="rainfall" class="form-label">Rainfall (mm)</label>
+                                    <input type="number" class="form-control" id="rainfall" name="rainfall" min="0" max="500" step="1" required>
+                                    <small class="text-muted">Enter expected rainfall in mm (Range: 0-500mm)</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="temperature" class="form-label">Temperature (°C)</label>
+                                    <input type="number" class="form-control" id="temperature" name="temperature" min="15" max="40" step="0.1" required>
+                                    <small class="text-muted">Enter expected temperature in °C (Range: 15-40°C)</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="humidity" class="form-label">Humidity (%)</label>
+                                    <input type="number" class="form-control" id="humidity" name="humidity" min="30" max="100" step="1" required>
+                                    <small class="text-muted">Enter expected humidity percentage (Range: 30-100%)</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="population_density" class="form-label">Population Density</label>
+                                    <select class="form-select" id="population_density" name="population_density" required>
+                                        <option value="" selected disabled>Select population density</option>
+                                        <option value="Low">Low</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="High">High</option>
+                                    </select>
+                                    <small class="text-muted">Low: <500 people/km², Medium: 500-2000 people/km², High: >2000 people/km²</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="water_quality" class="form-label">Water Quality</label>
+                                    <select class="form-select" id="water_quality" name="water_quality" required>
+                                        <option value="" selected disabled>Select water quality</option>
+                                        <option value="Good">Good</option>
+                                        <option value="Moderate">Moderate</option>
+                                        <option value="Poor">Poor</option>
+                                        <option value="Very Poor">Very Poor</option>
+                                    </select>
+                                    <small class="text-muted">Assessment of local water quality based on contamination levels</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="air_quality" class="form-label">Air Quality</label>
+                                    <select class="form-select" id="air_quality" name="air_quality" required>
+                                        <option value="" selected disabled>Select air quality</option>
+                                        <option value="Low">Low</option>
+                                        <option value="Moderate">Moderate</option>
+                                        <option value="High">High</option>
+                                    </select>
+                                    <small class="text-muted">Low: AQI <50, Moderate: AQI 51-100, High: AQI >100</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="vaccination_rate" class="form-label">Vaccination Rate (%)</label>
+                                    <input type="number" class="form-control" id="vaccination_rate" name="vaccination_rate" min="0" max="100" step="0.1" required>
+                                    <small class="text-muted">Enter vaccination coverage percentage for the disease (Range: 0-100%)</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="hospital_beds" class="form-label">Hospital Beds per 1000 people</label>
+                                    <input type="number" class="form-control" id="hospital_beds" name="hospital_beds" min="0" max="10" step="0.1" required>
+                                    <small class="text-muted">Enter available hospital beds per 1000 people (Range: 0-10)</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="previous_outbreak" class="form-label">Previous Outbreak History</label>
+                                    <select class="form-select" id="previous_outbreak" name="previous_outbreak" required>
+                                        <option value="" selected disabled>Select previous outbreak history</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                    <small class="text-muted">Whether this disease had an outbreak in this location in the past 5 years</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email for Alerts (Optional)</label>
+                                    <input type="email" class="form-control" id="email" name="email">
+                                    <small class="text-muted">Receive email alerts for high-risk predictions</small>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Predict Outbreak Risk</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Prediction Results -->
+                <div class="col-lg-6">
+                    {% if prediction %}
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Prediction Results</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-{{ 'danger' if prediction.risk == 'High' else 'warning' if prediction.risk == 'Medium' else 'success' }}" role="alert">
+                                <h4 class="alert-heading">{{ prediction.risk }} Risk</h4>
+                                <p>The predicted risk of {{ input_data.disease }} outbreak in {{ input_data.location }} is <strong>{{ prediction.risk }}</strong>.</p>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">Estimated Cases</h5>
+                                            <p class="display-4">{{ prediction.estimated_cases }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">Estimated Deaths</h5>
+                                            <p class="display-4">{{ prediction.estimated_deaths }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h4>Risk Probability</h4>
+                            <div class="progress mb-4" style="height: 25px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ prediction.risk_probability.Low * 100 }}%;" aria-valuenow="{{ prediction.risk_probability.Low * 100 }}" aria-valuemin="0" aria-valuemax="100">Low: {{ (prediction.risk_probability.Low * 100)|round(1) }}%</div>
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ prediction.risk_probability.Medium * 100 }}%;" aria-valuenow="{{ prediction.risk_probability.Medium * 100 }}" aria-valuemin="0" aria-valuemax="100">Medium: {{ (prediction.risk_probability.Medium * 100)|round(1) }}%</div>
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: {{ prediction.risk_probability.High * 100 }}%;" aria-valuenow="{{ prediction.risk_probability.High * 100 }}" aria-valuemin="0" aria-valuemax="100">High: {{ (prediction.risk_probability.High * 100)|round(1) }}%</div>
+                            </div>
+                            
+                            <h4>Input Parameters</h4>
+                            <table class="table table-striped">
+                                <tbody>
+                                    <tr>
+                                        <th>Date</th>
+                                        <td>{{ input_data.date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Location</th>
+                                        <td>{{ input_data.location }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Disease</th>
+                                        <td>{{ input_data.disease }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Rainfall (mm)</th>
+                                        <td>{{ input_data.rainfall }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Temperature (°C)</th>
+                                        <td>{{ input_data.temperature }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Humidity (%)</th>
+                                        <td>{{ input_data.humidity }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendations -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">AI-Powered Recommendations</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="recommendations-content markdown-content">
+                                {{ recommendations|safe }}
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-chart-line fa-5x text-primary mb-3"></i>
+                            <h3>Enter Parameters to Get Predictions</h3>
+                            <p class="text-muted">Fill out the form to predict disease outbreak risk and get AI-powered recommendations.</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-4 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Malappuram Disease Outbreak Prediction</h5>
+                    <p>A machine learning-based system for predicting and preventing disease outbreaks in Malappuram district, Kerala.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('main.index') }}" class="text-white">Home</a></li>
+                        <li><a href="{{ url_for('main.dashboard') }}" class="text-white">Dashboard</a></li>
+                        <li><a href="{{ url_for('main.predict') }}" class="text-white">Predict</a></li>
+                        <li><a href="{{ url_for('main.map') }}" class="text-white">Map</a></li>
+                        <li><a href="{{ url_for('main.about') }}" class="text-white">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@malappuram-health.org</li>
+                        <li><i class="fas fa-phone me-2"></i> +91 1234567890</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Malappuram, Kerala, India</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2023 Malappuram Disease Outbreak Prediction. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // Render markdown content if it exists
+        document.addEventListener('DOMContentLoaded', function() {
+            const recommendationsContent = document.querySelector('.recommendations-content');
+            if (recommendationsContent) {
+                const markdownText = recommendationsContent.innerHTML.trim();
+                if (markdownText) {
+                    recommendationsContent.innerHTML = marked.parse(markdownText);
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Malappuram Disease Outbreak Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                <i class="fas fa-virus"></i> Malappuram Disease Predictor
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.predict') }}">Predict</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.map') }}">Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.about') }}">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <header class="dashboard-header py-4 bg-light">
+        <div class="container">
+            <h1 class="display-5 fw-bold text-primary">Disease Outbreak Dashboard</h1>
+            <p class="lead">Comprehensive visualization of disease patterns and statistics in Malappuram district.</p>
+        </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <section class="dashboard-content py-4">
+        <div class="container">
+            <!-- Summary Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Diseases</h5>
+                            <p class="card-text display-6">{{ disease_stats|length }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Locations</h5>
+                            <p class="card-text display-6">{{ location_stats|length }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Cases</h5>
+                            <p class="card-text display-6">
+                                {% set total_cases = 0 %}
+                                {% for disease, stats in disease_stats.items() %}
+                                    {% set total_cases = total_cases + stats.total_cases %}
+                                {% endfor %}
+                                {{ total_cases }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Deaths</h5>
+                            <p class="card-text display-6">
+                                {% set total_deaths = 0 %}
+                                {% for disease, stats in disease_stats.items() %}
+                                    {% set total_deaths = total_deaths + stats.total_deaths %}
+                                {% endfor %}
+                                {{ total_deaths }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts Row 1 -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Cases by Disease</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="casesChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Deaths by Disease</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="deathsChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts Row 2 -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Seasonal Disease Patterns</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="seasonalChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Time Series Analysis</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="diseaseSelect" class="form-label">Select Disease:</label>
+                                <select class="form-select" id="diseaseSelect">
+                                    {% for disease in disease_stats %}
+                                    <option value="{{ disease }}">{{ disease }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <canvas id="timeSeriesChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Disease Details -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Disease Details</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Disease</th>
+                                            <th>Total Cases</th>
+                                            <th>Total Deaths</th>
+                                            <th>Avg. Cases per Outbreak</th>
+                                            <th>Max Cases</th>
+                                            <th>High Risk Count</th>
+                                            <th>Medium Risk Count</th>
+                                            <th>Low Risk Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for disease, stats in disease_stats.items() %}
+                                        <tr>
+                                            <td>{{ disease }}</td>
+                                            <td>{{ stats.total_cases }}</td>
+                                            <td>{{ stats.total_deaths }}</td>
+                                            <td>{{ stats.avg_cases|round(1) }}</td>
+                                            <td>{{ stats.max_cases }}</td>
+                                            <td>{{ stats.high_risk_count }}</td>
+                                            <td>{{ stats.medium_risk_count }}</td>
+                                            <td>{{ stats.low_risk_count }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-4 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Malappuram Disease Outbreak Prediction</h5>
+                    <p>A machine learning-based system for predicting and preventing disease outbreaks in Malappuram district, Kerala.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('main.index') }}" class="text-white">Home</a></li>
+                        <li><a href="{{ url_for('main.dashboard') }}" class="text-white">Dashboard</a></li>
+                        <li><a href="{{ url_for('main.predict') }}" class="text-white">Predict</a></li>
+                        <li><a href="{{ url_for('main.map') }}" class="text-white">Map</a></li>
+                        <li><a href="{{ url_for('main.about') }}" class="text-white">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@malappuram-health.org</li>
+                        <li><i class="fas fa-phone me-2"></i> +91 1234567890</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Malappuram, Kerala, India</li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2023 Malappuram Disease Outbreak Prediction. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Helper function to generate random colors
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+        
+        // Cases Chart
+        const casesCtx = document.getElementById('casesChart').getContext('2d');
+        const casesChart = new Chart(casesCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for disease in disease_stats %}'{{ disease }}',{% endfor %}],
+                datasets: [{
+                    label: 'Total Cases',
+                    data: [{% for disease, stats in disease_stats.items() %}{{ stats.total_cases }},{% endfor %}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Deaths Chart
+        const deathsCtx = document.getElementById('deathsChart').getContext('2d');
+        const deathsChart = new Chart(deathsCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for disease in disease_stats %}'{{ disease }}',{% endfor %}],
+                datasets: [{
+                    label: 'Total Deaths',
+                    data: [{% for disease, stats in disease_stats.items() %}{{ stats.total_deaths }},{% endfor %}],
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Seasonal Patterns Chart
+        const seasonalCtx = document.getElementById('seasonalChart').getContext('2d');
+        const seasonalChart = new Chart(seasonalCtx, {
+            type: 'line',
+            data: {
+                labels: ['Winter', 'Summer', 'Monsoon', 'Post-Monsoon'],
+                datasets: [
+                    {% for disease, seasons in seasonal_patterns.items() %}
+                    {
+                        label: '{{ disease }}',
+                        data: [
+                            {{ seasons.get('Winter', 0) }},
+                            {{ seasons.get('Summer', 0) }},
+                            {{ seasons.get('Monsoon', 0) }},
+                            {{ seasons.get('Post-Monsoon', 0) }}
+                        ],
+                        fill: false,
+                        borderColor: getRandomColor(),
+                        tension: 0.1
+                    },
+                    {% endfor %}
+                ]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        // Time Series Chart
+        let timeSeriesChart;
+        const timeSeriesCtx = document.getElementById('timeSeriesChart').getContext('2d');
+        
+        // Fetch time series data
+        fetch('/api/time-series')
+            .then(response => response.json())
+            .then(data => {
+                const diseaseSelect = document.getElementById('diseaseSelect');
+                const selectedDisease = diseaseSelect.value;
+                
+                createTimeSeriesChart(data, selectedDisease);
+                
+                // Handle disease selection change
+                diseaseSelect.addEventListener('change', function() {
+                    const selectedDisease = this.value;
+                    createTimeSeriesChart(data, selectedDisease);
+                });
+            });
+        
+        function createTimeSeriesChart(data, disease) {
+            if (timeSeriesChart) {
+                timeSeriesChart.destroy();
+            }
+            
+            const diseaseData = data[disease];
+            
+            timeSeriesChart = new Chart(timeSeriesCtx, {
+                type: 'line',
+                data: {
+                    labels: diseaseData.dates,
+                    datasets: [{
+                        label: `${disease} Cases Over Time`,
+                        data: diseaseData.cases,
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html> 
